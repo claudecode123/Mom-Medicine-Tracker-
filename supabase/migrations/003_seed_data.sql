@@ -1,0 +1,48 @@
+-- ============================================================
+-- OPTIONAL DEMO / SEED DATA
+-- Replace <YOUR_USER_ID> with your actual Supabase user UUID
+-- (visible in Auth → Users in the Supabase dashboard)
+-- Run this AFTER logging in and after 001_initial_schema.sql
+-- ============================================================
+
+-- To use: replace the placeholder below with your user UUID,
+-- then run this in the SQL editor.
+
+-- do $$
+-- declare
+--   v_user_id uuid := '<YOUR_USER_ID>';
+--   v_med1 uuid;
+--   v_med2 uuid;
+--   v_med3 uuid;
+-- begin
+--
+--   -- Update profile
+--   update public.profiles
+--   set patient_name = 'Mom', caregiver_name = 'Pavith'
+--   where user_id = v_user_id;
+--
+--   -- Medicine 1: Metformin
+--   insert into public.medicines (owner_id, name, brand_name, strength, dosage_form, stock_unit, instructions, current_stock, stock_threshold_days)
+--   values (v_user_id, 'Metformin', 'Glucophage', '500 mg', 'tablet', 'tablet', 'Take after breakfast', 45, 5)
+--   returning id into v_med1;
+--
+--   insert into public.medicine_schedules (medicine_id, time_period, quantity_per_dose)
+--   values (v_med1, 'morning', 1), (v_med1, 'evening', 1);
+--
+--   -- Medicine 2: Amlodipine
+--   insert into public.medicines (owner_id, name, strength, dosage_form, stock_unit, instructions, current_stock, stock_threshold_days)
+--   values (v_user_id, 'Amlodipine', '5 mg', 'tablet', 'tablet', 'Take in the morning', 28, 5)
+--   returning id into v_med2;
+--
+--   insert into public.medicine_schedules (medicine_id, time_period, quantity_per_dose)
+--   values (v_med2, 'morning', 1);
+--
+--   -- Medicine 3: Calcium + Vitamin D
+--   insert into public.medicines (owner_id, name, strength, dosage_form, stock_unit, instructions, current_stock)
+--   values (v_user_id, 'Calcium + Vitamin D3', '500 mg + 250 IU', 'tablet', 'tablet', 'Take after dinner', 60)
+--   returning id into v_med3;
+--
+--   insert into public.medicine_schedules (medicine_id, time_period, quantity_per_dose)
+--   values (v_med3, 'evening', 1);
+--
+-- end $$;
