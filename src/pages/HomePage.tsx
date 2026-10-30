@@ -12,6 +12,7 @@ import { Pill } from 'lucide-react'
 import { EmptyState } from '@/components/common/EmptyState'
 import { stockStatusColor, TIME_PERIODS, type TimePeriod } from '@/lib/utils'
 import { Link } from 'react-router-dom'
+import { History } from 'lucide-react'
 
 function getGreeting() {
   const h = new Date().getHours()
@@ -217,6 +218,17 @@ export function HomePage() {
             )
           })}
         </div>
+      )}
+
+      {/* History shortcut */}
+      {totalDoses > 0 && (
+        <Link
+          to="/history"
+          className="flex items-center justify-center gap-2 text-sm text-warm-400 hover:text-brand-600 py-2"
+        >
+          <History size={14} />
+          View dose history
+        </Link>
       )}
 
       {bulkPeriod && (() => {

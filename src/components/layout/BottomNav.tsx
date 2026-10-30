@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Pill, History, Settings, PlusCircle } from 'lucide-react'
+import { Home, Pill, Settings, PlusCircle, CalendarDays } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const leftItems = [
@@ -8,8 +8,8 @@ const leftItems = [
 ]
 
 const rightItems = [
-  { to: '/history',  icon: History,  label: 'History' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
+  { to: '/stock-days', icon: CalendarDays, label: 'Days' },
+  { to: '/settings',   icon: Settings,     label: 'Settings' },
 ]
 
 export function BottomNav() {

@@ -9,6 +9,7 @@ import { HistoryPage } from '@/pages/HistoryPage'
 import { DoctorVisitsPage } from '@/pages/DoctorVisitsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { LogDosePage } from '@/pages/LogDosePage'
+import { StockDaysPage } from '@/pages/StockDaysPage'
 import { PageLoader } from '@/components/common/LoadingSpinner'
 
 const queryClient = new QueryClient({
@@ -37,6 +38,7 @@ function AppRoutes() {
       <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
       <Route path="/doctor-visits" element={<ProtectedRoute><DoctorVisitsPage /></ProtectedRoute>} />
       <Route path="/log-dose" element={<ProtectedRoute><LogDosePage /></ProtectedRoute>} />
+      <Route path="/stock-days" element={<ProtectedRoute><StockDaysPage /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
