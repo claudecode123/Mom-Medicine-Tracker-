@@ -47,50 +47,55 @@ export function HomePage() {
 
   return (
     <div className="space-y-5">
-      {/* Hero header — 2.AG dark teal with body silhouette */}
-      <div className="-mx-4 -mt-5 rounded-b-3xl overflow-hidden bg-brand-800 px-5 pt-6 pb-8 relative">
-        {/* Body silhouette */}
+      {/* ── Hero header ── */}
+      <div
+        className="-mx-4 -mt-5 rounded-b-3xl overflow-hidden px-5 pt-6 pb-8 relative"
+        style={{ background: 'linear-gradient(135deg, #111760 0%, #2a36b5 45%, #5865f2 100%)' }}
+      >
+        {/* Decorative radial glow */}
+        <div className="absolute -top-10 -right-10 w-52 h-52 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(136,145,242,0.25) 0%, transparent 70%)' }} />
+
+        {/* Body silhouette — white */}
         <svg
           viewBox="0 0 120 220"
-          className="absolute right-3 bottom-0 h-44 opacity-15 pointer-events-none"
-          fill="none"
+          className="absolute right-3 bottom-0 h-44 opacity-10 pointer-events-none"
+          fill="white"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
         >
-          {/* Head */}
-          <circle cx="60" cy="24" r="18" fill="#2ecea0" />
-          {/* Neck */}
-          <rect x="54" y="40" width="12" height="10" rx="4" fill="#2ecea0" />
-          {/* Torso */}
-          <path d="M32 50 Q28 70 30 100 H90 Q92 70 88 50 Q74 44 60 44 Q46 44 32 50Z" fill="#2ecea0" />
-          {/* Left arm */}
-          <path d="M32 56 Q18 70 16 100 Q20 106 26 104 Q34 80 40 58Z" fill="#2ecea0" />
-          {/* Right arm */}
-          <path d="M88 56 Q102 70 104 100 Q100 106 94 104 Q86 80 80 58Z" fill="#2ecea0" />
-          {/* Left leg */}
-          <path d="M42 100 Q36 140 34 170 Q38 176 46 174 Q52 144 54 100Z" fill="#2ecea0" />
-          {/* Right leg */}
-          <path d="M78 100 Q84 140 86 170 Q82 176 74 174 Q68 144 66 100Z" fill="#2ecea0" />
-          {/* Left foot */}
-          <ellipse cx="40" cy="176" rx="10" ry="6" fill="#2ecea0" />
-          {/* Right foot */}
-          <ellipse cx="80" cy="176" rx="10" ry="6" fill="#2ecea0" />
+          <circle cx="60" cy="24" r="18" />
+          <rect x="54" y="40" width="12" height="10" rx="4" />
+          <path d="M32 50 Q28 70 30 100 H90 Q92 70 88 50 Q74 44 60 44 Q46 44 32 50Z" />
+          <path d="M32 56 Q18 70 16 100 Q20 106 26 104 Q34 80 40 58Z" />
+          <path d="M88 56 Q102 70 104 100 Q100 106 94 104 Q86 80 80 58Z" />
+          <path d="M42 100 Q36 140 34 170 Q38 176 46 174 Q52 144 54 100Z" />
+          <path d="M78 100 Q84 140 86 170 Q82 176 74 174 Q68 144 66 100Z" />
+          <ellipse cx="40" cy="176" rx="10" ry="6" />
+          <ellipse cx="80" cy="176" rx="10" ry="6" />
         </svg>
 
-        <p className="text-brand-300 text-sm font-medium">{format(new Date(), 'EEEE, d MMMM yyyy')}</p>
-        <h1 className="text-2xl font-bold text-white mt-1" style={{ fontFamily: 'Inter Tight, Inter, sans-serif' }}>
-          {getGreeting()}, {profile?.caregiver_name ?? 'Caregiver'} 👋
+        <p className="text-brand-300 text-xs font-semibold tracking-widest uppercase">
+          {format(new Date(), 'EEEE, d MMMM yyyy')}
+        </p>
+        <h1 className="text-[1.6rem] font-black text-white mt-1 leading-tight" style={{ fontFamily: 'Inter Tight, Inter, sans-serif' }}>
+          {getGreeting()}, {profile?.display_name ?? profile?.caregiver_name ?? 'there'} 👋
         </h1>
 
-        {/* Stats inline in header */}
+        {/* Stat cards with glassmorphism */}
         <div className="grid grid-cols-2 gap-3 mt-5">
-          <div className="bg-white/10 rounded-2xl p-3 text-center">
-            <p className="text-3xl font-bold text-brand-300">{givenDoses}</p>
-            <p className="text-xs text-white/70 mt-0.5">Given today</p>
+          <div className="glass-card p-3 text-center">
+            <p className="text-[2rem] font-black leading-none" style={{ color: '#57f287', textShadow: '0 0 20px rgba(87,242,135,0.4)' }}>
+              {givenDoses}
+            </p>
+            <p className="text-[11px] text-white/60 mt-1 font-medium tracking-wide">Given today</p>
           </div>
-          <div className="bg-white/10 rounded-2xl p-3 text-center">
-            <p className={`text-3xl font-bold ${pendingDoses > 0 ? 'text-amber-300' : 'text-white/30'}`}>{pendingDoses}</p>
-            <p className="text-xs text-white/70 mt-0.5">Still pending</p>
+          <div className="glass-card p-3 text-center">
+            <p className={`text-[2rem] font-black leading-none ${pendingDoses > 0 ? '' : 'text-white/25'}`}
+              style={pendingDoses > 0 ? { color: '#fda220', textShadow: '0 0 20px rgba(253,162,32,0.4)' } : {}}>
+              {pendingDoses}
+            </p>
+            <p className="text-[11px] text-white/60 mt-1 font-medium tracking-wide">Still pending</p>
           </div>
         </div>
       </div>
