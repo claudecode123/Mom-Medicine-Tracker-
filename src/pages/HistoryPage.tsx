@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { format, addDays, subDays, parseISO } from 'date-fns'
 import { ChevronLeft, ChevronRight, CheckCircle2, Clock, SkipForward, Image } from 'lucide-react'
+import { OrganIconChip } from '@/components/common/OrganIconChip'
 import { useDosesForDate, usePhotoUrl } from '@/hooks/useDoses'
 import { PageLoader } from '@/components/common/LoadingSpinner'
 import { cn } from '@/lib/utils'
@@ -173,11 +174,7 @@ export function HistoryPage() {
                 {given.map(dose => (
                   <div key={dose.id} className="bg-white rounded-2xl p-3.5 flex items-start gap-3"
                     style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)', border: '1px solid rgba(52,199,89,0.12)' }}>
-                    {/* Green check chip */}
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                      style={{ background: 'rgba(52,199,89,0.1)' }}>
-                      <CheckCircle2 size={18} style={{ color: '#34C759' }} />
-                    </div>
+                    <OrganIconChip name={(dose as any).medicines?.name ?? ''} size={36} radius={10} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
@@ -220,10 +217,7 @@ export function HistoryPage() {
                 {notGiven.map(dose => (
                   <div key={dose.id} className="bg-white rounded-2xl p-3.5 flex items-center gap-3"
                     style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.06)' }}>
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ background: 'rgba(0,0,0,0.04)' }}>
-                      <SkipForward size={15} className="text-warm-400" />
-                    </div>
+                    <OrganIconChip name={(dose as any).medicines?.name ?? ''} size={36} radius={10} />
                     <div>
                       <p className="font-semibold text-warm-700 text-sm">{(dose as any).medicines?.name}</p>
                       <p className="text-xs text-warm-400 capitalize mt-0.5">{dose.scheduled_period.replace('_', ' ')} · {dose.status}</p>

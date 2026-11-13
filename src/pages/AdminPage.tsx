@@ -7,6 +7,7 @@ import {
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { MemojiAvatar } from '@/components/common/MemojiAvatar'
 
 function StatCard({ icon: Icon, label, value, color }: {
   icon: React.ElementType; label: string; value: string | number; color: string
@@ -254,11 +255,12 @@ export function AdminPage() {
             return (
               <div key={u.user_id} className="card py-3">
                 <div className="flex items-center gap-3">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold ${
-                    u.role === 'admin' ? 'bg-brand-500 text-white' : 'bg-warm-100 text-warm-600'
-                  }`}>
-                    {u.role === 'admin' ? <Shield size={15} className="text-white" /> : getInitials(u.display_name)}
-                  </div>
+                  <MemojiAvatar
+                    seed={u.display_name ?? 'User'}
+                    size={36}
+                    rounded="xl"
+                    avatarIndex={u.avatar_index ?? null}
+                  />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-warm-800 truncate">
                       {u.display_name ?? 'Unknown'}

@@ -24,6 +24,7 @@ export const DEMO_PROFILE: Profile = {
   timezone: 'Asia/Kolkata',
   low_stock_threshold_days: 5,
   require_photo_for_dose: false,
+  avatar_index: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 }

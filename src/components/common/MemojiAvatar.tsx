@@ -18,10 +18,11 @@ interface MemojiAvatarProps {
   size?: number
   className?: string
   rounded?: 'full' | 'xl' | '2xl' | '3xl'
+  avatarIndex?: number | null
 }
 
-export function MemojiAvatar({ seed, size = 56, className, rounded = '2xl' }: MemojiAvatarProps) {
-  const index = getAvatarIndex(seed)
+export function MemojiAvatar({ seed, size = 56, className, rounded = '2xl', avatarIndex }: MemojiAvatarProps) {
+  const index = (avatarIndex != null && avatarIndex >= 0 && avatarIndex <= 44) ? avatarIndex : getAvatarIndex(seed)
   const col = index % 7
   const row = Math.floor(index / 7)
   const scaleFactor = size / 682

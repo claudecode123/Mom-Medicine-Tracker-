@@ -26,21 +26,29 @@ const ICONS: Record<string, OrganIcon> = {
 }
 
 const KEYWORD_MAP: Array<[RegExp, keyof typeof ICONS]> = [
-  [/heart|cardiac|cardio|blood.pres|b\.?p\b|amlodip|atenolol|metoprolol|lisinop|ramipril|warfarin|aspirin|clopidogrel|bisoprolol|digoxin|furosemide/i, 'heart'],
-  [/lung|asthma|breath|inhaler|respiratory|salbutamol|budesonide|montelukast|fluticasone|tiotropium|ipratropium|theophylline/i, 'lungs'],
-  [/kidney|renal|nephro|creatinine|dialysis/i, 'kidney'],
+  // Heart / BP / cholesterol (keep aspirin here too for Ecosprin)
+  [/heart|cardiac|cardio|blood.pres|b\.?p\b|amlodip|atenolol|metoprolol|lisinop|ramipril|warfarin|aspirin|ecosprin|clopidogrel|bisoprolol|digoxin|furosemide|telm|telmisartan|losartan|valsartan|olmesartan|cand|irbesartan/i, 'heart'],
+  // Lungs / TB / respiratory
+  [/lung|asthma|breath|inhaler|respiratory|salbutamol|budesonide|montelukast|fluticasone|tiotropium|ipratropium|theophylline|rifampicin|rifampin|isoniazid|pyrazin|ethambutol|combutol/i, 'lungs'],
+  // Kidney / uric acid / gout
+  [/kidney|renal|nephro|creatinine|dialysis|gout|uric|allopurinol|zyloric|febuxostat|fuberic/i, 'kidney'],
   [/bladder|urolog|cystitis/i, 'bladder'],
-  [/liver|hepat|gallblad|bile|ursodeoxycholic/i, 'liver'],
+  // Liver / statins / cholesterol
+  [/liver|hepat|gallblad|bile|ursodeoxycholic|statin|atorvastatin|atrova|rosuvastatin|rosuvas|simvastatin|pravastatin|cholesterol/i, 'liver'],
+  // Brain / neuro / seizure / TB pyridoxine adjunct
   [/brain|neuro|psych|mental|anxiety|depres|sleep|melatonin|sertraline|fluoxetine|escitalopram|duloxetine|amitriptyline|quetiapine|olanzapine|risperidone|gabapentin|pregabalin|phenytoin|levetiracetam|lamotrigine|carbamazepine|donepezil|memantine|lacoset|lacosamide/i, 'brain'],
-  [/stomach|gastro|acid|digest|antacid|omeprazole|lansoprazole|pantoprazole|domperidone|metoclopramide|ondansetron|esomeprazole/i, 'stomach'],
+  [/stomach|gastro|acid|digest|antacid|omeprazole|lansoprazole|pantoprazole|pantocid|domperidone|metoclopramide|ondansetron|esomeprazole/i, 'stomach'],
   [/intestine|bowel|colon|ibs|crohn|loperamide|mesalazine/i, 'intestine'],
-  [/spine|back|disc|vertebr|osteoarthritis/i, 'spine'],
+  // Spine / bone / calcium
+  [/spine|back|disc|vertebr|osteoarthritis|calcium|calcitr|shelcal|vitamin.*d\b|cholecalciferol/i, 'spine'],
   [/eye|ophthalm|conjunctiv|glaucoma|latanoprost|timolol.*eye/i, 'eye'],
   [/ear|ENT|cerumen|otitis/i, 'ear'],
   [/skin|derma|eczema|psoriasis|acne|topical/i, 'skin'],
-  [/blood|haemoglob|anemia|haematol|iron|folic|b12|vitamin.*b|warfarin|heparin/i, 'blood'],
+  // Blood / vitamins / pyridoxine (Benadon = B6)
+  [/blood|haemoglob|anemia|haematol|iron|folic|b12|vitamin.*b|benadon|pyridoxin|warfarin|heparin/i, 'blood'],
   [/thyroid|levothyroxine|thyroxine|propylthiouracil|carbimazole/i, 'thyroid'],
-  [/thymus|immune|immunosuppres|tacrolimus|mycophenolate/i, 'thymus'],
+  // Thymus / steroids / immune
+  [/thymus|immune|immunosuppres|tacrolimus|mycophenolate|prednisolon|wysolone|steroid|methylpred|dexameth|prednison/i, 'thymus'],
 ]
 
 export function getMedicineIcon(medicineName: string): OrganIcon {

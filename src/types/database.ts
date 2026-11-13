@@ -15,6 +15,7 @@ export interface Profile {
   timezone: string
   low_stock_threshold_days: number
   require_photo_for_dose: boolean
+  avatar_index: number | null
   created_at: string
   updated_at: string
 }

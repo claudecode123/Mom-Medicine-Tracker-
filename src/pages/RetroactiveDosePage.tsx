@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ClockArrowUp, ChevronLeft, ChevronRight, CheckCircle, Minus, AlertTriangle, Loader2, Save } from 'lucide-react'
+import { OrganIconChip } from '@/components/common/OrganIconChip'
 import { useMedicines } from '@/hooks/useMedicines'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -267,9 +268,12 @@ export function RetroactiveDosePage() {
             }`}>
               {/* Medicine header */}
               <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="font-semibold text-warm-800 text-sm">{entry.medicineName}</p>
-                  {entry.strength && <p className="text-xs text-warm-400">{entry.strength}</p>}
+                <div className="flex items-center gap-2">
+                  <OrganIconChip name={entry.medicineName} size={32} radius={8} />
+                  <div>
+                    <p className="font-semibold text-warm-800 text-sm">{entry.medicineName}</p>
+                    {entry.strength && <p className="text-xs text-warm-400">{entry.strength}</p>}
+                  </div>
                 </div>
                 {/* Status toggle */}
                 <div className="flex gap-1.5">

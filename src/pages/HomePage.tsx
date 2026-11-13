@@ -79,7 +79,7 @@ export function HomePage() {
           </div>
           <div className="flex-shrink-0">
             <div className="rounded-2xl overflow-hidden border-2 border-white/40 shadow-lg">
-              <MemojiAvatar seed={displayName} size={52} rounded="2xl" />
+              <MemojiAvatar seed={displayName} size={52} rounded="2xl" avatarIndex={profile?.avatar_index ?? null} />
             </div>
           </div>
         </div>

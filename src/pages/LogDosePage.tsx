@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { Camera, X, CheckCircle, Loader2, AlertTriangle, ChevronDown, ImagePlus, Trash2 } from 'lucide-react'
+import { OrganIconChip } from '@/components/common/OrganIconChip'
 import { useMedicines } from '@/hooks/useMedicines'
 import { useRecordDose } from '@/hooks/useDoses'
 import { useAlternativeBrands } from '@/hooks/useAlternativeBrands'
@@ -373,7 +374,8 @@ export function LogDosePage() {
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
+                    <OrganIconChip name={med.name} size={34} radius={9} />
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className={`font-semibold text-sm ${justLogged ? 'text-green-700' : 'text-warm-800'}`}>
                           {med.name}

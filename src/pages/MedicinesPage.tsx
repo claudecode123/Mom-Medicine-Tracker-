@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus, Pill, Edit, PackagePlus, Archive, ChevronDown, ChevronUp, AlertTriangle, Tag, X } from 'lucide-react'
+import { OrganIconChip } from '@/components/common/OrganIconChip'
 import { useMedicines, useArchiveMedicine } from '@/hooks/useMedicines'
 import { useAlternativeBrands, useAddAlternativeBrand, useDeleteAlternativeBrand, useSetPreferredBrand } from '@/hooks/useAlternativeBrands'
 import { EmptyState } from '@/components/common/EmptyState'
@@ -189,12 +190,7 @@ export function MedicinesPage() {
                   onClick={() => setExpandedId(isExpanded ? null : med.id)}
                   className="w-full flex items-start gap-3 text-left"
                 >
-                  <div className={cn(
-                    'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0',
-                    med.is_critical ? 'bg-red-50' : med.active ? 'bg-brand-100' : 'bg-warm-100'
-                  )}>
-                    <Pill size={18} className={med.is_critical ? 'text-red-500' : med.active ? 'text-brand-600' : 'text-warm-400'} />
-                  </div>
+                  <OrganIconChip name={med.name} size={40} radius={12} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>

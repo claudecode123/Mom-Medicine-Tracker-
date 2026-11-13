@@ -11,6 +11,7 @@ interface FamilyMember {
   role: 'admin' | 'user'
   relation: string | null
   email: string
+  avatar_index?: number | null
 }
 
 export function LoginPage() {
@@ -113,7 +114,7 @@ export function LoginPage() {
                   >
                     {/* Memoji avatar */}
                     <div className="relative flex-shrink-0">
-                      <MemojiAvatar seed={member.display_name} size={56} rounded="2xl" />
+                      <MemojiAvatar seed={member.display_name} size={56} rounded="2xl" avatarIndex={member.avatar_index ?? null} />
                       {/* Online indicator */}
                       <span className="online-dot" style={{ borderColor: 'white' }} />
                     </div>
@@ -153,7 +154,7 @@ export function LoginPage() {
                 <ChevronLeft size={20} />
               </button>
               <div className="flex items-center gap-3">
-                <MemojiAvatar seed={selected.display_name} size={44} rounded="xl" />
+                <MemojiAvatar seed={selected.display_name} size={44} rounded="xl" avatarIndex={selected.avatar_index ?? null} />
                 <div>
                   <p className="font-bold text-warm-900 text-sm">{selected.display_name}</p>
                   <p className="text-xs text-warm-500">{selected.relation ?? selected.role}</p>

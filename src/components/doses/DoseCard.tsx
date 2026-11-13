@@ -4,6 +4,7 @@ import { RecordDoseModal } from './RecordDoseModal'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { DoseRecord, TimePeriod } from '@/types/database'
+import { OrganIconChip } from '@/components/common/OrganIconChip'
 
 interface Props {
   dose: DoseRecord & {
@@ -35,13 +36,16 @@ export function DoseCard({ dose, schedule, requirePhoto }: Props) {
   return (
     <>
       <div className={cn('card border flex gap-3', cfg.bg, cfg.border)}>
-        <div className={cn('mt-0.5', dose.status === 'given' ? 'text-brand-500' : dose.status === 'overdue' ? 'text-amber-500' : 'text-warm-300')}>
-          <Icon size={20} strokeWidth={2} />
-        </div>
+        <OrganIconChip name={med.name} size={36} radius={10} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="font-semibold text-warm-800 truncate">{med.name}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-semibold text-warm-800 truncate">{med.name}</p>
+                <span className={cn('flex-shrink-0', dose.status === 'given' ? 'text-brand-500' : dose.status === 'overdue' ? 'text-amber-500' : 'text-warm-300')}>
+                  <Icon size={14} strokeWidth={2} />
+                </span>
+              </div>
               {med.strength && <p className="text-xs text-warm-400">{med.strength}</p>}
             </div>
             <span className={cfg.badge}>{cfg.label}</span>

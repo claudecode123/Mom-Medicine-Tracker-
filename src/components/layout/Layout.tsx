@@ -131,7 +131,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <div className="p-4" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2.5">
             <div className="relative flex-shrink-0">
-              <MemojiAvatar seed={displayName} size={36} rounded="xl" />
+              <MemojiAvatar seed={displayName} size={36} rounded="xl" avatarIndex={profile?.avatar_index ?? null} />
               <span className="online-dot" />
             </div>
             <div className="min-w-0 flex-1">
