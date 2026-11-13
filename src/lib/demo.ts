@@ -17,6 +17,8 @@ export const DEMO_PROFILE: Profile = {
   user_id: 'demo-user-id',
   patient_name: 'Mom',
   caregiver_name: 'You',
+  display_name: 'Demo User',
+  role: 'user',
   timezone: 'Asia/Kolkata',
   low_stock_threshold_days: 5,
   require_photo_for_dose: false,

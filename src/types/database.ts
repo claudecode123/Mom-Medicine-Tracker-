@@ -8,9 +8,23 @@ export interface Profile {
   user_id: string
   patient_name: string
   caregiver_name: string | null
+  display_name: string | null
+  role: 'admin' | 'user'
   timezone: string
   low_stock_threshold_days: number
   require_photo_for_dose: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface PeriodPhoto {
+  id: string
+  owner_id: string
+  dose_date: string
+  period: TimePeriod
+  photo_storage_path: string
+  notes: string | null
+  created_by: string | null
   created_at: string
   updated_at: string
 }

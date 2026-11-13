@@ -19,7 +19,6 @@ export function useMedicines(includeArchived = false) {
       let q = (supabase as any)
         .from('medicines')
         .select('*, medicine_schedules(*)')
-        .eq('owner_id', user!.id)
         .order('name')
         .order('sort_order', { referencedTable: 'medicine_schedules', ascending: true })
       if (!includeArchived) q = q.is('archived_at', null)
@@ -75,7 +74,7 @@ export function useCreateMedicine() {
       }
       const { data: med, error: medError } = await (supabase as any)
         .from('medicines')
-        .insert({ ...payload.medicine, owner_id: user!.id })
+        .insert({ ...payload.medicine, owner_id: user!.id  })
         .select()
         .single()
       if (medError) throw medError

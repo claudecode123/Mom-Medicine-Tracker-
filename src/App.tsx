@@ -10,6 +10,8 @@ import { DoctorVisitsPage } from '@/pages/DoctorVisitsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { LogDosePage } from '@/pages/LogDosePage'
 import { StockDaysPage } from '@/pages/StockDaysPage'
+import { AdminPage } from '@/pages/AdminPage'
+import { RetroactiveDosePage } from '@/pages/RetroactiveDosePage'
 import { PageLoader } from '@/components/common/LoadingSpinner'
 
 const queryClient = new QueryClient({
@@ -23,6 +25,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth()
   if (loading) return <PageLoader />
   if (!session) return <Navigate to="/login" replace />
+  return <Layout>{children}</Layout>
+}
+
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { session, loading, isAdmin } = useAuth()
+  if (loading) return <PageLoader />
+  if (!session) return <Navigate to="/login" replace />
+  if (!isAdmin) return <Navigate to="/" replace />
   return <Layout>{children}</Layout>
 }
 
@@ -40,6 +50,8 @@ function AppRoutes() {
       <Route path="/log-dose" element={<ProtectedRoute><LogDosePage /></ProtectedRoute>} />
       <Route path="/stock-days" element={<ProtectedRoute><StockDaysPage /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+      <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+      <Route path="/retroactive" element={<AdminRoute><RetroactiveDosePage /></AdminRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

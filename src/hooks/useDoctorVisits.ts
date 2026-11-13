@@ -14,7 +14,6 @@ export function useDoctorVisits() {
       const { data, error } = await (supabase as any)
         .from('doctor_visits')
         .select('*')
-        .eq('owner_id', user!.id)
         .order('visit_date', { ascending: false })
       if (error) throw error
       return data as DoctorVisit[]
@@ -35,7 +34,6 @@ export function useUpcomingFollowUp() {
       const { data, error } = await (supabase as any)
         .from('doctor_visits')
         .select('*')
-        .eq('owner_id', user!.id)
         .gte('follow_up_date', today)
         .order('follow_up_date')
         .limit(1)

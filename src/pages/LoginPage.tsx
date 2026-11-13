@@ -1,100 +1,184 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Heart, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Heart, Eye, EyeOff, Loader2, ShieldCheck, User, ChevronLeft } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { DEMO_MODE } from '@/lib/demo'
+
+interface FamilyMember {
+  name: string
+  role: 'admin' | 'user'
+  relation: string
+  email: string
+  initial: string
+  color: string
+}
+
+const FAMILY_MEMBERS: FamilyMember[] = [
+  {
+    name: 'Pavith Grover',
+    role: 'admin',
+    relation: 'Elder Son',
+    email: 'pavithgrover@outlook.com',
+    initial: 'P',
+    color: 'bg-brand-500',
+  },
+  {
+    name: 'Parmeet Singh',
+    role: 'user',
+    relation: 'Husband',
+    email: 'parmeet.singh@medicine-tracker.app',
+    initial: 'PS',
+    color: 'bg-violet-500',
+  },
+  {
+    name: 'Naman Singh',
+    role: 'user',
+    relation: 'Younger Son',
+    email: 'naman.singh@medicine-tracker.app',
+    initial: 'N',
+    color: 'bg-amber-500',
+  },
+]
 
 export function LoginPage() {
   const { signIn, session } = useAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [selected, setSelected] = useState<FamilyMember | null>(null)
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // In demo mode, auto-redirect if already logged in
   useEffect(() => {
     if (session) navigate('/')
   }, [session])
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
+    if (!selected) return
     setLoading(true)
     setError(null)
-    const { error } = await signIn(email, password)
+    const { error } = await signIn(selected.email, password)
     setLoading(false)
     if (error) {
-      setError('Incorrect email or password. Please try again.')
+      setError('Incorrect password. Please try again.')
     } else {
       navigate('/')
     }
   }
 
-  async function handleDemoLogin() {
-    setLoading(true)
-    await signIn('demo@example.com', 'demo')
-    navigate('/')
+  function handleSelectMember(member: FamilyMember) {
+    setSelected(member)
+    setPassword('')
+    setError(null)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-brand-50 to-warm-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-violet-50 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-brand-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <Heart size={28} className="text-white" />
+          <div className="w-16 h-16 rounded-2xl bg-brand-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-200">
+            <Heart size={28} className="text-white fill-white/30" />
           </div>
-          <h1 className="text-2xl font-bold text-warm-800">Mom's Medicine Tracker</h1>
-          <p className="text-warm-500 mt-1.5">Sign in to continue</p>
+          <h1 className="text-2xl font-bold text-warm-800 font-display">Dr Nikkie's Meds</h1>
+          <p className="text-warm-400 mt-1 text-sm">Family Medicine Tracker</p>
         </div>
 
-        {DEMO_MODE && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4 text-center">
-            <p className="text-amber-800 font-semibold text-sm">🎯 Demo Mode</p>
-            <p className="text-amber-700 text-xs mt-1">Running locally with sample data. No Supabase needed.</p>
-            <button onClick={handleDemoLogin} disabled={loading}
-              className="btn-primary w-full mt-3 bg-amber-500 hover:bg-amber-600 text-sm py-2.5">
-              {loading ? <><Loader2 size={16} className="animate-spin" /> Loading…</> : 'Enter Demo →'}
-            </button>
+        {!selected ? (
+          /* Profile Selection */
+          <div>
+            <p className="text-center text-warm-500 text-sm mb-5 font-medium">Who are you?</p>
+            <div className="space-y-3">
+              {FAMILY_MEMBERS.map(member => (
+                <button
+                  key={member.email}
+                  onClick={() => handleSelectMember(member)}
+                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-warm-100 p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all text-left group"
+                >
+                  <div className={`w-12 h-12 rounded-xl ${member.color} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                    {member.initial}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-warm-800">{member.name}</p>
+                      {member.role === 'admin' && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full">
+                          <ShieldCheck size={11} />
+                          Admin
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-warm-400">{member.relation}</p>
+                  </div>
+                  <ChevronLeft size={16} className="text-warm-300 rotate-180 group-hover:text-brand-400 transition-colors" />
+                </button>
+              ))}
+            </div>
+            <p className="text-center text-xs text-warm-300 mt-6">
+              Private family health tracker · Unauthorised access is not permitted
+            </p>
+          </div>
+        ) : (
+          /* Password Entry */
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setSelected(null)}
+                className="p-2 rounded-xl hover:bg-warm-100 text-warm-400 hover:text-warm-600 transition-colors"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl ${selected.color} flex items-center justify-center text-white font-bold text-sm`}>
+                  {selected.initial}
+                </div>
+                <div>
+                  <p className="font-semibold text-warm-800 text-sm">{selected.name}</p>
+                  <p className="text-xs text-warm-400">{selected.relation}</p>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSignIn} className="bg-white rounded-2xl shadow-sm border border-warm-100 p-6 space-y-4">
+              <h2 className="font-semibold text-warm-700 text-sm">Enter your password</h2>
+
+              {error && (
+                <div className="bg-red-50 text-red-700 text-sm rounded-xl px-4 py-3 border border-red-100">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <div className="relative">
+                  <input
+                    type={showPw ? 'text' : 'password'}
+                    autoFocus
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="input-field pr-12 text-lg tracking-wider"
+                    placeholder="••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600 p-1"
+                  >
+                    {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" disabled={loading || !password} className="btn-primary w-full">
+                {loading
+                  ? <><Loader2 size={18} className="animate-spin" /> Signing in…</>
+                  : 'Sign In'
+                }
+              </button>
+            </form>
           </div>
         )}
-
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-warm-100 p-6 space-y-4">
-          {error && (
-            <div className="bg-red-50 text-red-700 text-sm rounded-xl px-4 py-3 border border-red-100">
-              {error}
-            </div>
-          )}
-          <div>
-            <label htmlFor="email" className="label">Email address</label>
-            <input
-              id="email" type="email" autoComplete="email" required
-              value={email} onChange={e => setEmail(e.target.value)}
-              className="input-field" placeholder="your@email.com"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="label">Password</label>
-            <div className="relative">
-              <input
-                id="password" type={showPw ? 'text' : 'password'}
-                autoComplete="current-password" required
-                value={password} onChange={e => setPassword(e.target.value)}
-                className="input-field pr-12" placeholder="Enter your password"
-              />
-              <button type="button" onClick={() => setShowPw(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600 p-1">
-                {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-          <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
-            {loading ? <><Loader2 size={18} className="animate-spin" /> Signing in…</> : 'Sign In'}
-          </button>
-        </form>
-        <p className="text-center text-xs text-warm-400 mt-5">
-          Private family health tracker. Unauthorised access is not permitted.
-        </p>
       </div>
     </div>
   )

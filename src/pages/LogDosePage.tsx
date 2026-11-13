@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
-import { Camera, X, CheckCircle, Loader2, AlertTriangle, ChevronDown } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Camera, X, CheckCircle, Loader2, AlertTriangle, ChevronDown, ImagePlus, Trash2 } from 'lucide-react'
 import { useMedicines } from '@/hooks/useMedicines'
 import { useRecordDose } from '@/hooks/useDoses'
 import { useAlternativeBrands } from '@/hooks/useAlternativeBrands'
+import { usePeriodPhoto, usePeriodPhotoUrl, useUploadPeriodPhoto, useDeletePeriodPhoto } from '@/hooks/usePeriodPhotos'
 import { TIME_PERIODS, type TimePeriod } from '@/lib/utils'
 import { format } from 'date-fns'
 
@@ -48,38 +49,15 @@ function QuickLogModal({
 }) {
   const { data: altBrands = [] } = useAlternativeBrands(target.medicineId)
   const recordDose = useRecordDose()
-  const fileRef = useRef<HTMLInputElement>(null)
 
   const [quantity, setQuantity] = useState(String(target.defaultQty))
   const [brandUsed, setBrandUsed] = useState(target.preferredBrand ?? '')
   const [notes, setNotes] = useState('')
-  const [photo, setPhoto] = useState<File | null>(null)
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
 
-  useEffect(() => {
-    if (altBrands.length > 0 && !brandUsed) {
-      setBrandUsed(target.preferredBrand ?? altBrands[0]?.brand_name ?? '')
-    }
-  }, [altBrands.length])
-
   const qty = parseFloat(quantity) || 0
   const enoughStock = qty <= target.currentStock
-
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setPhoto(file)
-    setPhotoPreview(URL.createObjectURL(file))
-  }
-
-  function removePhoto() {
-    setPhoto(null)
-    if (photoPreview) URL.revokeObjectURL(photoPreview)
-    setPhotoPreview(null)
-    if (fileRef.current) fileRef.current.value = ''
-  }
 
   async function handleRecord() {
     setError(null)
@@ -94,7 +72,7 @@ function QuickLogModal({
         scheduledPeriod: target.period,
         scheduledFor,
         quantityAdministered: qty,
-        photo,
+        photo: null,
         notes: notes.trim() || null,
         brandUsed: brandUsed || null,
       })
@@ -177,31 +155,6 @@ function QuickLogModal({
               placeholder="Observations, side effects…" />
           </div>
 
-          {/* Photo */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-warm-500 uppercase tracking-wide flex items-center gap-1.5">
-              <Camera size={13} /> Photo <span className="normal-case font-normal">(optional)</span>
-            </label>
-            {photoPreview ? (
-              <div className="relative">
-                <img src={photoPreview} alt="Dose" className="w-full h-32 object-cover rounded-xl" />
-                <button type="button" onClick={removePhoto}
-                  className="absolute top-2 right-2 bg-white rounded-full p-1 shadow text-warm-600 hover:text-red-500">
-                  <X size={14} />
-                </button>
-              </div>
-            ) : (
-              <>
-                <button type="button" onClick={() => fileRef.current?.click()}
-                  className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-warm-200 rounded-xl py-5 text-warm-400 hover:border-brand-300 hover:text-brand-500 transition-colors text-sm">
-                  <Camera size={20} /> Add photo
-                </button>
-                <input ref={fileRef} type="file" accept="image/*" capture="environment"
-                  onChange={handleFile} className="hidden" />
-              </>
-            )}
-          </div>
-
           {error && (
             <p className="text-red-600 text-sm bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</p>
           )}
@@ -226,11 +179,95 @@ function QuickLogModal({
   )
 }
 
+function PeriodPhotoCard({ date, period, periodLabel }: { date: string; period: TimePeriod; periodLabel: string }) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const { data: existing } = usePeriodPhoto(date, period)
+  const { data: photoUrl } = usePeriodPhotoUrl(existing?.photo_storage_path ?? null)
+  const upload = useUploadPeriodPhoto()
+  const remove = useDeletePeriodPhoto()
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (fileRef.current) fileRef.current.value = ''
+    await upload.mutateAsync({
+      date,
+      period,
+      photo: file,
+      existingId: existing?.id,
+    })
+  }
+
+  async function handleRemove() {
+    if (!existing) return
+    await remove.mutateAsync({
+      id: existing.id,
+      date,
+      period,
+      path: existing.photo_storage_path,
+    })
+  }
+
+  return (
+    <div className="card border-2 border-dashed border-warm-200">
+      <div className="flex items-center gap-3 mb-3">
+        <Camera size={15} className="text-warm-400" />
+        <span className="text-sm font-semibold text-warm-700">{periodLabel} Photo</span>
+        <span className="text-xs text-warm-400 font-normal">(one photo for all medicines)</span>
+      </div>
+
+      {photoUrl ? (
+        <div className="relative">
+          <img src={photoUrl} alt="Period photo" className="w-full h-40 object-cover rounded-xl" />
+          <div className="absolute top-2 right-2 flex gap-2">
+            <button
+              onClick={() => fileRef.current?.click()}
+              className="bg-white rounded-full p-2 shadow text-warm-600 hover:text-brand-500"
+              title="Replace photo"
+            >
+              <Camera size={14} />
+            </button>
+            <button
+              onClick={handleRemove}
+              disabled={remove.isPending}
+              className="bg-white rounded-full p-2 shadow text-warm-600 hover:text-red-500"
+              title="Remove photo"
+            >
+              {remove.isPending ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={upload.isPending}
+          className="w-full flex items-center justify-center gap-2 py-5 rounded-xl text-warm-400 hover:text-brand-500 hover:bg-brand-50 transition-colors text-sm"
+        >
+          {upload.isPending
+            ? <><Loader2 size={18} className="animate-spin" /> Uploading…</>
+            : <><ImagePlus size={18} /> Add {periodLabel} photo</>
+          }
+        </button>
+      )}
+
+      <input ref={fileRef} type="file" accept="image/*" capture="environment"
+        onChange={handleFile} className="hidden" />
+
+      {upload.isError && (
+        <p className="text-red-600 text-xs mt-2">{(upload.error as any)?.message}</p>
+      )}
+    </div>
+  )
+}
+
 export function LogDosePage() {
   const { data: medicines = [] } = useMedicines()
   const [activePeriod, setActivePeriod] = useState<TimePeriod>(currentPeriod())
   const [logTarget, setLogTarget] = useState<LogTarget | null>(null)
   const [recentlyLogged, setRecentlyLogged] = useState<Set<string>>(new Set())
+
+  const today = format(new Date(), 'yyyy-MM-dd')
 
   const periodMeds = TIME_PERIODS.map(tp => {
     const meds = medicines
@@ -301,13 +338,22 @@ export function LogDosePage() {
         ))}
       </div>
 
+      {/* Period photo card */}
+      {activePeriodData && activePeriodData.meds.length > 0 && (
+        <PeriodPhotoCard
+          date={today}
+          period={activePeriod}
+          periodLabel={activePeriodData.label}
+        />
+      )}
+
       {/* Medicine list for active period */}
       {activePeriodData && (
         <div className="space-y-2">
           {activePeriodData.meds.length === 0 ? (
             <p className="text-warm-400 text-sm text-center py-8">No medicines scheduled for this period.</p>
           ) : (
-            activePeriodData.meds.map((item, idx) => {
+            activePeriodData.meds.map((item) => {
               if (!item) return null
               const { med, sched } = item
               const justLogged = recentlyLogged.has(med.id)
@@ -327,30 +373,29 @@ export function LogDosePage() {
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-warm-100 text-warm-500 text-xs font-bold flex items-center justify-center">
-                        {idx + 1}
-                      </span>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className="font-semibold text-warm-800 text-sm">{med.name}</p>
-                          {med.is_critical && <span className="text-xs">❤️</span>}
-                          {med.needs_confirmation && <span className="text-xs">⚠️</span>}
-                        </div>
-                        <p className="text-xs text-warm-400 truncate">
-                          {med.strength && `${med.strength} · `}
-                          {sched.quantity_per_dose} {med.stock_unit}
-                          {med.category && ` · ${med.category}`}
-                          {outOfStock && <span className="text-red-500 ml-1">· Out of stock</span>}
-                        </p>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`font-semibold text-sm ${justLogged ? 'text-green-700' : 'text-warm-800'}`}>
+                          {med.name}
+                        </span>
+                        {med.strength && (
+                          <span className="text-xs text-warm-400">{med.strength}</span>
+                        )}
+                        {med.is_critical && !justLogged && (
+                          <span className="text-[10px] bg-red-50 text-red-500 border border-red-100 px-1.5 py-0.5 rounded-full font-medium">Critical</span>
+                        )}
+                        {outOfStock && !justLogged && (
+                          <span className="text-[10px] bg-orange-50 text-orange-500 border border-orange-100 px-1.5 py-0.5 rounded-full font-medium">Out of stock</span>
+                        )}
                       </div>
+                      <p className="text-xs text-warm-400 mt-0.5">{sched.quantity_per_dose} {med.stock_unit}</p>
                     </div>
                     {justLogged ? (
                       <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
                     ) : (
-                      <span className="flex-shrink-0 text-xs font-semibold text-brand-600 bg-brand-50 border border-brand-200 rounded-lg px-2.5 py-1">
-                        Log
-                      </span>
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${outOfStock ? 'bg-warm-100' : 'bg-brand-50'}`}>
+                        <span className={`text-lg ${outOfStock ? 'text-warm-300' : 'text-brand-400'}`}>+</span>
+                      </div>
                     )}
                   </div>
                 </button>
@@ -360,7 +405,6 @@ export function LogDosePage() {
         </div>
       )}
 
-      {/* Quick log modal */}
       {logTarget && (
         <QuickLogModal
           target={logTarget}

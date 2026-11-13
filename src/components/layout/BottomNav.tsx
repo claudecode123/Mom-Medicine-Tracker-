@@ -1,20 +1,23 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Pill, Settings, PlusCircle, CalendarDays } from 'lucide-react'
+import { Home, Pill, Settings, PlusCircle, History, Stethoscope } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-const leftItems = [
-  { to: '/',          icon: Home,    label: 'Home' },
-  { to: '/medicines', icon: Pill,    label: 'Medicines' },
-]
-
-const rightItems = [
-  { to: '/stock-days', icon: CalendarDays, label: 'Days' },
-  { to: '/settings',   icon: Settings,     label: 'Settings' },
-]
+import { useAuth } from '@/context/AuthContext'
 
 export function BottomNav() {
+  const { isAdmin } = useAuth()
+
+  const leftItems = [
+    { to: '/',          icon: Home,    label: 'Home' },
+    { to: '/medicines', icon: Pill,    label: 'Meds' },
+  ]
+
+  const rightItems = [
+    { to: '/history',    icon: History,     label: 'History' },
+    { to: '/settings',   icon: Settings,    label: 'Settings' },
+  ]
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-warm-200 z-40 safe-area-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-warm-100 z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="flex items-stretch max-w-lg mx-auto">
         {leftItems.map(({ to, icon: Icon, label }) => (
           <NavLink
@@ -53,9 +56,9 @@ export function BottomNav() {
                 'w-12 h-12 rounded-2xl flex items-center justify-center shadow-md transition-all',
                 isActive ? 'bg-brand-600 scale-105' : 'bg-brand-500 hover:bg-brand-600'
               )}>
-                <PlusCircle size={26} className="text-white" strokeWidth={2} />
+                <PlusCircle size={24} className="text-white" strokeWidth={2} />
               </div>
-              <span className={isActive ? 'text-brand-600' : 'text-brand-500'}>Log Dose</span>
+              <span className={isActive ? 'text-brand-600' : 'text-brand-500'}>Log</span>
             </>
           )}
         </NavLink>
