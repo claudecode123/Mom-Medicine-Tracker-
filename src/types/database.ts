@@ -10,6 +10,8 @@ export interface Profile {
   caregiver_name: string | null
   display_name: string | null
   role: 'admin' | 'user'
+  email: string | null
+  relation: string | null
   timezone: string
   low_stock_threshold_days: number
   require_photo_for_dose: boolean

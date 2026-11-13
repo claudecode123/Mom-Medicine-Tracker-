@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   Home, Pill, History, Stethoscope, Settings, Heart, PlusCircle,
-  CalendarDays, ShieldCheck, ClockArrowUp, LogOut, User,
+  CalendarDays, ShieldCheck, ClockArrowUp, LogOut, User, ScrollText,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BottomNav } from './BottomNav'
@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/doctor-visits', icon: Stethoscope,  label: 'Doctor Visits' },
   { to: '/retroactive',   icon: ClockArrowUp, label: 'Edit Past Dose', adminOnly: true },
   { to: '/admin',         icon: ShieldCheck,  label: 'Admin Panel', adminOnly: true },
+  { to: '/edit-logs',     icon: ScrollText,   label: 'Edit Logs' },
   { to: '/settings',      icon: Settings,     label: 'Settings' },
 ]
 

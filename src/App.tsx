@@ -12,6 +12,7 @@ import { LogDosePage } from '@/pages/LogDosePage'
 import { StockDaysPage } from '@/pages/StockDaysPage'
 import { AdminPage } from '@/pages/AdminPage'
 import { RetroactiveDosePage } from '@/pages/RetroactiveDosePage'
+import { EditLogsPage } from '@/pages/EditLogsPage'
 import { PageLoader } from '@/components/common/LoadingSpinner'
 
 const queryClient = new QueryClient({
@@ -52,6 +53,7 @@ function AppRoutes() {
       <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
       <Route path="/retroactive" element={<AdminRoute><RetroactiveDosePage /></AdminRoute>} />
+      <Route path="/edit-logs" element={<ProtectedRoute><EditLogsPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

@@ -9,6 +9,7 @@ import { AddStockModal } from '@/components/medicines/AddStockModal'
 import { StockBadge } from '@/components/common/StockBadge'
 import type { Medicine } from '@/types/database'
 import { cn, stockStatusColor } from '@/lib/utils'
+import { useAuth } from '@/context/AuthContext'
 
 type View = 'list' | 'add' | 'edit'
 
@@ -89,6 +90,7 @@ function AlternativeBrandsSection({ medicine }: { medicine: Medicine }) {
 export function MedicinesPage() {
   const { data: medicines, isLoading } = useMedicines()
   const archiveMed = useArchiveMedicine()
+  const { isAdmin } = useAuth()
   const [view, setView] = useState<View>('list')
   const [editingMed, setEditingMed] = useState<Medicine | null>(null)
   const [stockModalMed, setStockModalMed] = useState<Medicine | null>(null)
@@ -137,9 +139,11 @@ export function MedicinesPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-warm-800">Medicines</h1>
-        <button onClick={() => setView('add')} className="btn-primary px-4 py-2.5 text-sm">
-          <Plus size={16} /> Add
-        </button>
+        {isAdmin && (
+          <button onClick={() => setView('add')} className="btn-primary px-4 py-2.5 text-sm">
+            <Plus size={16} /> Add
+          </button>
+        )}
       </div>
 
       {/* Stats row */}
@@ -237,29 +241,31 @@ export function MedicinesPage() {
                       </div>
                     )}
 
-                    <AlternativeBrandsSection medicine={med} />
+                    {isAdmin && <AlternativeBrandsSection medicine={med} />}
 
                     {med.refill_notes && (
                       <p className="text-sm text-warm-500">📝 {med.refill_notes}</p>
                     )}
 
-                    <div className="grid grid-cols-3 gap-2">
-                      <button onClick={() => { setEditingMed(med); setView('edit') }}
-                        className="btn-secondary text-sm py-2 flex items-center justify-center gap-1.5">
-                        <Edit size={14} /> Edit
-                      </button>
-                      <button onClick={() => setStockModalMed(med)}
-                        className="btn-secondary text-sm py-2 flex items-center justify-center gap-1.5">
-                        <PackagePlus size={14} /> Stock
-                      </button>
-                      <button
-                        onClick={() => setShowArchiveConfirm(showArchiveConfirm === med.id ? null : med.id)}
-                        className="btn-secondary text-sm py-2 flex items-center justify-center gap-1.5 text-warm-500">
-                        <Archive size={14} /> Archive
-                      </button>
-                    </div>
+                    {isAdmin && (
+                      <div className="grid grid-cols-3 gap-2">
+                        <button onClick={() => { setEditingMed(med); setView('edit') }}
+                          className="btn-secondary text-sm py-2 flex items-center justify-center gap-1.5">
+                          <Edit size={14} /> Edit
+                        </button>
+                        <button onClick={() => setStockModalMed(med)}
+                          className="btn-secondary text-sm py-2 flex items-center justify-center gap-1.5">
+                          <PackagePlus size={14} /> Stock
+                        </button>
+                        <button
+                          onClick={() => setShowArchiveConfirm(showArchiveConfirm === med.id ? null : med.id)}
+                          className="btn-secondary text-sm py-2 flex items-center justify-center gap-1.5 text-warm-500">
+                          <Archive size={14} /> Archive
+                        </button>
+                      </div>
+                    )}
 
-                    {showArchiveConfirm === med.id && (
+                    {isAdmin && showArchiveConfirm === med.id && (
                       <div className="bg-warm-50 rounded-xl p-3 space-y-2">
                         <p className="text-sm text-warm-700">Archive {med.name}? It will no longer appear in daily schedules, but all history is preserved.</p>
                         <div className="flex gap-2">

@@ -79,10 +79,6 @@ export function SettingsPage() {
             <label className="label">Your name (caregiver)</label>
             <input className="input-field" value={caregiverName} onChange={e => setCaregiverName(e.target.value)} placeholder="Your name" />
           </div>
-          <div>
-            <label className="label">Email (account)</label>
-            <input className="input-field" value={user?.email ?? ''} disabled />
-          </div>
         </div>
 
 

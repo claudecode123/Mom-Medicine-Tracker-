@@ -1,47 +1,30 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Heart, Eye, EyeOff, Loader2, ShieldCheck, User, ChevronLeft } from 'lucide-react'
+import { Heart, Eye, EyeOff, Loader2, ShieldCheck, ChevronLeft } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { supabase } from '@/lib/supabase'
+
+const MEMBER_COLORS = ['bg-brand-500', 'bg-violet-500', 'bg-amber-500', 'bg-teal-500', 'bg-rose-500']
 
 interface FamilyMember {
-  name: string
+  user_id: string
+  display_name: string
   role: 'admin' | 'user'
-  relation: string
+  relation: string | null
   email: string
   initial: string
   color: string
 }
 
-const FAMILY_MEMBERS: FamilyMember[] = [
-  {
-    name: 'Pavith Grover',
-    role: 'admin',
-    relation: 'Elder Son',
-    email: 'pavithgrover@outlook.com',
-    initial: 'P',
-    color: 'bg-brand-500',
-  },
-  {
-    name: 'Parmeet Singh',
-    role: 'user',
-    relation: 'Husband',
-    email: 'parmeet.singh@medicine-tracker.app',
-    initial: 'PS',
-    color: 'bg-violet-500',
-  },
-  {
-    name: 'Naman Singh',
-    role: 'user',
-    relation: 'Younger Son',
-    email: 'naman.singh@medicine-tracker.app',
-    initial: 'N',
-    color: 'bg-amber-500',
-  },
-]
+function getInitials(name: string) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+}
 
 export function LoginPage() {
   const { signIn, session } = useAuth()
   const navigate = useNavigate()
+  const [members, setMembers] = useState<FamilyMember[]>([])
+  const [loadingMembers, setLoadingMembers] = useState(true)
   const [selected, setSelected] = useState<FamilyMember | null>(null)
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
@@ -51,6 +34,31 @@ export function LoginPage() {
   useEffect(() => {
     if (session) navigate('/')
   }, [session])
+
+  useEffect(() => {
+    async function loadMembers() {
+      setLoadingMembers(true)
+      const { data } = await (supabase as any).rpc('get_family_members')
+      if (data) {
+        const sorted = [...data].sort((a: any, b: any) => {
+          if (a.role === 'admin' && b.role !== 'admin') return -1
+          if (a.role !== 'admin' && b.role === 'admin') return 1
+          return (a.display_name ?? '').localeCompare(b.display_name ?? '')
+        })
+        setMembers(sorted.map((m: any, i: number) => ({
+          user_id: m.user_id,
+          display_name: m.display_name,
+          role: m.role as 'admin' | 'user',
+          relation: m.relation,
+          email: m.email,
+          initial: getInitials(m.display_name),
+          color: m.role === 'admin' ? 'bg-brand-500' : MEMBER_COLORS[1 + (i % (MEMBER_COLORS.length - 1))],
+        })))
+      }
+      setLoadingMembers(false)
+    }
+    loadMembers()
+  }, [])
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
@@ -85,41 +93,45 @@ export function LoginPage() {
         </div>
 
         {!selected ? (
-          /* Profile Selection */
           <div>
             <p className="text-center text-warm-500 text-sm mb-5 font-medium">Who are you?</p>
-            <div className="space-y-3">
-              {FAMILY_MEMBERS.map(member => (
-                <button
-                  key={member.email}
-                  onClick={() => handleSelectMember(member)}
-                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-warm-100 p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all text-left group"
-                >
-                  <div className={`w-12 h-12 rounded-xl ${member.color} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
-                    {member.initial}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-warm-800">{member.name}</p>
-                      {member.role === 'admin' && (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full">
-                          <ShieldCheck size={11} />
-                          Admin
-                        </span>
-                      )}
+            {loadingMembers ? (
+              <div className="flex justify-center py-8">
+                <Loader2 size={24} className="animate-spin text-brand-400" />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {members.map(member => (
+                  <button
+                    key={member.user_id}
+                    onClick={() => handleSelectMember(member)}
+                    className="w-full flex items-center gap-4 bg-white rounded-2xl border border-warm-100 p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all text-left group"
+                  >
+                    <div className={`w-12 h-12 rounded-xl ${member.color} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                      {member.initial}
                     </div>
-                    <p className="text-sm text-warm-400">{member.relation}</p>
-                  </div>
-                  <ChevronLeft size={16} className="text-warm-300 rotate-180 group-hover:text-brand-400 transition-colors" />
-                </button>
-              ))}
-            </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-warm-800">{member.display_name}</p>
+                        {member.role === 'admin' && (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full">
+                            <ShieldCheck size={11} />
+                            Admin
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-warm-400">{member.relation ?? member.role}</p>
+                    </div>
+                    <ChevronLeft size={16} className="text-warm-300 rotate-180 group-hover:text-brand-400 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            )}
             <p className="text-center text-xs text-warm-300 mt-6">
               Private family health tracker · Unauthorised access is not permitted
             </p>
           </div>
         ) : (
-          /* Password Entry */
           <div>
             <div className="flex items-center gap-3 mb-6">
               <button
@@ -133,8 +145,8 @@ export function LoginPage() {
                   {selected.initial}
                 </div>
                 <div>
-                  <p className="font-semibold text-warm-800 text-sm">{selected.name}</p>
-                  <p className="text-xs text-warm-400">{selected.relation}</p>
+                  <p className="font-semibold text-warm-800 text-sm">{selected.display_name}</p>
+                  <p className="text-xs text-warm-400">{selected.relation ?? selected.role}</p>
                 </div>
               </div>
             </div>
@@ -148,26 +160,24 @@ export function LoginPage() {
                 </div>
               )}
 
-              <div>
-                <div className="relative">
-                  <input
-                    type={showPw ? 'text' : 'password'}
-                    autoFocus
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="input-field pr-12 text-lg tracking-wider"
-                    placeholder="••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600 p-1"
-                  >
-                    {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+              <div className="relative">
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  autoFocus
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="input-field pr-12 text-lg tracking-wider"
+                  placeholder="••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600 p-1"
+                >
+                  {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
 
               <button type="submit" disabled={loading || !password} className="btn-primary w-full">

@@ -56,7 +56,7 @@ function useDosesForDatePeriod(date: string, period: TimePeriod) {
 }
 
 export function RetroactiveDosePage() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const qc = useQueryClient()
   const [selectedDate, setSelectedDate] = useState(() => subDays(new Date(), 1))
   const [activePeriod, setActivePeriod] = useState<TimePeriod>('morning')
@@ -156,6 +156,27 @@ export function RetroactiveDosePage() {
             .insert({ ...record, created_at: new Date().toISOString() })
           if (error) throw error
         }
+      }
+
+      // Write immutable edit log entries
+      const logEntries = entries
+        .filter(e => e.status !== 'pending')
+        .map(e => ({
+          edited_at: new Date().toISOString(),
+          edited_by_user_id: user!.id,
+          edited_by_name: profile?.display_name ?? profile?.caregiver_name ?? 'Admin',
+          dose_date: dateStr,
+          period: activePeriod,
+          medicine_name: e.medicineName,
+          medicine_strength: e.strength ?? null,
+          action: e.status,
+          quantity: e.status === 'given' ? e.quantity : null,
+          notes: e.notes || null,
+          correction_reason: e.correctionReason || 'Retroactive entry',
+          dose_record_id: e.existingRecordId ?? null,
+        }))
+      if (logEntries.length > 0) {
+        await (supabase as any).from('dose_edit_logs').insert(logEntries)
       }
     },
     onSuccess: () => {
