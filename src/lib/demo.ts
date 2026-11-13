@@ -19,6 +19,8 @@ export const DEMO_PROFILE: Profile = {
   caregiver_name: 'You',
   display_name: 'Demo User',
   role: 'user',
+  email: null,
+  relation: null,
   timezone: 'Asia/Kolkata',
   low_stock_threshold_days: 5,
   require_photo_for_dose: false,

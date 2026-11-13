@@ -2,191 +2,129 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @theme {
-  /* 2.AG-inspired teal/mint palette */
-  --color-brand-50:  #f0faf8;
-  --color-brand-100: #d8f3ec;
-  --color-brand-200: #aae6d5;
-  --color-brand-300: #6dddbd;
-  --color-brand-400: #3ecfac;
-  --color-brand-500: #2ecea0;
-  --color-brand-600: #1ba87f;
-  --color-brand-700: #158063;
-  --color-brand-800: #244d54;
-  --color-brand-900: #1a3b40;
+  /* Discord blurple */
+  --color-brand-50:  #1a1c3a;
+  --color-brand-100: #232651;
+  --color-brand-200: #3a4091;
+  --color-brand-300: #6872e0;
+  --color-brand-400: #8891f2;
+  --color-brand-500: #5865f2;
+  --color-brand-600: #4752c4;
+  --color-brand-700: #3c45a5;
+  --color-brand-800: #2a36b5;
+  --color-brand-900: #111760;
 
-  /* Neutral palette */
-  --color-warm-50:  #f0f1f2;
-  --color-warm-100: #e5e7eb;
-  --color-warm-200: #d1d5db;
-  --color-warm-300: #9ca3af;
-  --color-warm-400: #858585;
-  --color-warm-500: #4d4d4d;
-  --color-warm-600: #374151;
-  --color-warm-700: #1f2937;
-  --color-warm-800: #151515;
-  --color-warm-900: #000000;
+  /* Discord dark surfaces */
+  --color-warm-50:  #1e1f22;
+  --color-warm-100: #2b2d31;
+  --color-warm-200: #35373c;
+  --color-warm-300: #4e5058;
+  --color-warm-400: #72767d;
+  --color-warm-500: #949ba4;
+  --color-warm-600: #b5bac1;
+  --color-warm-700: #dbdee1;
+  --color-warm-800: #f2f3f5;
+  --color-warm-900: #ffffff;
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Inter Tight', 'Inter', system-ui, sans-serif;
-
   --breakpoint-xs: 380px;
 }
 
 @layer base {
-  html {
-    font-family: var(--font-sans);
-    -webkit-tap-highlight-color: transparent;
-  }
-  body {
-    background-color: var(--color-warm-50);
-    color: var(--color-warm-800);
-    min-height: 100svh;
-  }
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+  html { font-family: var(--font-sans); -webkit-tap-highlight-color: transparent; }
+  body { background-color: var(--color-warm-50); color: var(--color-warm-800); min-height: 100svh; }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  select { background-color: #1e1f22; color: #f2f3f5; }
+  option { background-color: #2b2d31; color: #f2f3f5; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #35373c; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4e5058; }
 }
 
 @layer components {
   .btn-primary {
-    background-color: var(--color-brand-500);
-    color: white;
-    font-weight: 600;
-    border-radius: 9999px;
-    padding: 0.75rem 1.5rem;
-    min-height: 48px;
-    transition: background-color 0.15s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    border: none;
-
+    background-color: var(--color-brand-500); color: white; font-weight: 600;
+    border-radius: 9999px; padding: 0.75rem 1.5rem; min-height: 48px;
+    transition: background-color 0.15s; display: inline-flex; align-items: center;
+    justify-content: center; gap: 0.5rem; cursor: pointer; border: none;
     &:hover { background-color: var(--color-brand-600); }
-    &:active { background-color: var(--color-brand-600); }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
   }
-
   .btn-secondary {
-    background-color: white;
-    color: var(--color-warm-700);
-    font-weight: 600;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1.25rem;
-    min-height: 48px;
-    border: 1px solid var(--color-warm-200);
-    transition: background-color 0.15s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-
-    &:hover { background-color: var(--color-warm-100); }
-    &:active { background-color: var(--color-warm-200); }
+    background-color: #4e5058; color: #f2f3f5; font-weight: 600;
+    border-radius: 0.5rem; padding: 0.75rem 1.25rem; min-height: 48px;
+    border: 1px solid #35373c;
+    transition: background-color 0.15s; display: inline-flex; align-items: center;
+    justify-content: center; gap: 0.5rem; cursor: pointer;
+    &:hover { background-color: #5d6169; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
   }
-
   .btn-danger {
-    background-color: #ef4444;
-    color: white;
-    font-weight: 600;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1.25rem;
-    min-height: 48px;
-    border: none;
-    transition: background-color 0.15s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-
-    &:hover { background-color: #dc2626; }
+    background-color: #da3a4b; color: white; font-weight: 600;
+    border-radius: 0.5rem; padding: 0.75rem 1.25rem; min-height: 48px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    cursor: pointer; border: none;
+    &:hover { background-color: #c0394a; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
   }
-
   .card {
-    background-color: white;
-    border-radius: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    border: 1px solid var(--color-warm-100);
-    padding: 1rem;
+    background-color: #313338; border-radius: 0.75rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    border: 1px solid #3f4248; padding: 1rem;
   }
-
   .input-field {
-    width: 100%;
-    border-radius: 0.75rem;
-    border: 1px solid var(--color-warm-200);
-    background-color: white;
-    padding: 0.75rem 1rem;
-    color: var(--color-warm-800);
-    min-height: 48px;
-    transition: box-shadow 0.15s, border-color 0.15s;
-    outline: none;
-    font-size: 1rem;
-
-    &::placeholder { color: var(--color-warm-400); }
-    &:focus {
-      border-color: transparent;
-      box-shadow: 0 0 0 2px var(--color-brand-400);
-    }
+    width: 100%; border-radius: 0.375rem; border: 1.5px solid #35373c;
+    background-color: #1e1f22; padding: 0.75rem 1rem; color: #f2f3f5;
+    min-height: 48px; outline: none; font-size: 1rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    &::placeholder { color: #72767d; }
+    &:focus { border-color: #5865f2; box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.25); }
   }
-
-  .label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-warm-700);
-    margin-bottom: 0.375rem;
-  }
-
-  .badge-given {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.625rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background-color: var(--color-brand-100);
-    color: var(--color-brand-700);
-  }
-
-  .badge-pending {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.625rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background-color: #fef3c7;
-    color: #92400e;
-  }
-
-  .badge-overdue {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.625rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background-color: #fee2e2;
-    color: #991b1b;
-  }
-
-  .badge-skipped {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.625rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background-color: var(--color-warm-100);
-    color: var(--color-warm-500);
-  }
+  .label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-warm-600); margin-bottom: 0.375rem; }
+  .badge-given    { background-color: rgba(87, 242, 135, 0.15); color: #57f287; border-radius: 9999px; padding: 0.125rem 0.625rem; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+  .badge-pending  { background-color: rgba(253, 162, 32, 0.15); color: #fda220; border-radius: 9999px; padding: 0.125rem 0.625rem; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+  .badge-overdue  { background-color: rgba(218, 58, 75, 0.15);  color: #f87171; border-radius: 9999px; padding: 0.125rem 0.625rem; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+  .badge-skipped  { background-color: rgba(78, 80, 88, 0.5);    color: #949ba4; border-radius: 9999px; padding: 0.125rem 0.625rem; font-size: 0.75rem; font-weight: 600; display: inline-block; }
 }
+
+/* ─── Discord dark-mode overrides for Tailwind utilities ─────────────────────
+   Unlayered rules beat @layer utilities in the CSS cascade.
+   These convert light/pastel Tailwind colours to dark Discord equivalents.    */
+
+/* Surfaces that need to be dark Discord surface instead of white */
+.bg-white { background-color: #313338; }
+
+/* Light colour backgrounds → dark-tinted equivalents */
+.bg-brand-50     { background-color: rgba(88,  101, 242, 0.12); }
+.bg-red-50       { background-color: rgba(239,  68,  68, 0.12); }
+.bg-green-50     { background-color: rgba(34,  197,  94, 0.12); }
+.bg-amber-50     { background-color: rgba(245, 158,  11, 0.12); }
+.bg-violet-50    { background-color: rgba(139,  92, 246, 0.12); }
+.bg-teal-100     { background-color: rgba(20,  184, 166, 0.15); }
+.bg-blue-100     { background-color: rgba(59,  130, 246, 0.15); }
+
+/* Hover backgrounds */
+.hover\:bg-red-50:hover    { background-color: rgba(239, 68,  68,  0.15); }
+.hover\:bg-violet-50:hover { background-color: rgba(139, 92,  246, 0.15); }
+.hover\:bg-warm-50:hover   { background-color: rgba(255, 255, 255, 0.04); }
+
+/* Text colours → readable on dark backgrounds */
+.text-red-600  { color: #f87171; }
+.text-red-700  { color: #f87171; }
+.text-green-700 { color: #4ade80; }
+.text-teal-700  { color: #2dd4bf; }
+.text-blue-700  { color: #60a5fa; }
+.text-violet-600 { color: #a78bfa; }
+.text-amber-800  { color: #fda220; }
+.text-amber-600  { color: #fda220; }
+
+/* Borders → visible-but-subtle on dark backgrounds */
+.border-red-100   { border-color: rgba(239, 68, 68,  0.2); }
+.border-red-200   { border-color: rgba(239, 68, 68,  0.3); }
+.border-amber-200 { border-color: rgba(245, 158, 11, 0.3); }
+.border-green-200 { border-color: rgba(34,  197, 94, 0.3); }
+.border-warm-50   { border-color: rgba(255, 255, 255, 0.06); }
