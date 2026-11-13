@@ -13,6 +13,7 @@ const ICONS: Record<string, OrganIcon> = {
   bladder:  { src: '/organs/bladder.png', emoji: '💧',  label: 'Bladder',    bg: '#E5F5FF', fg: '#32ADE6' },
   liver:    { src: '/organs/liver.png',   emoji: '🟤',  label: 'Liver',      bg: '#FFF1E8', fg: '#D4580A' },
   thymus:   { src: '/organs/thymus.png',  emoji: '🧬',  label: 'Thymus',     bg: '#F5EEFF', fg: '#AF52DE' },
+  bacteria: {                             emoji: '🦠',  label: 'Bacteria',   bg: '#F0FFF4', fg: '#16A34A' },
   brain:    {                             emoji: '🧠',  label: 'Brain',      bg: '#F3EEFF', fg: '#7C3AED' },
   stomach:  {                             emoji: '🫃',  label: 'Stomach',    bg: '#ECFDF5', fg: '#059669' },
   intestine:{                             emoji: '🌀',  label: 'Intestine',  bg: '#FFF7ED', fg: '#D97706' },
@@ -26,17 +27,19 @@ const ICONS: Record<string, OrganIcon> = {
 }
 
 const KEYWORD_MAP: Array<[RegExp, keyof typeof ICONS]> = [
-  // Heart / BP / cholesterol (keep aspirin here too for Ecosprin)
-  [/heart|cardiac|cardio|blood.pres|b\.?p\b|amlodip|atenolol|metoprolol|lisinop|ramipril|warfarin|aspirin|ecosprin|clopidogrel|bisoprolol|digoxin|furosemide|telm|telmisartan|losartan|valsartan|olmesartan|cand|irbesartan/i, 'heart'],
-  // Lungs / TB / respiratory
-  [/lung|asthma|breath|inhaler|respiratory|salbutamol|budesonide|montelukast|fluticasone|tiotropium|ipratropium|theophylline|rifampicin|rifampin|isoniazid|pyrazin|ethambutol|combutol/i, 'lungs'],
+  // Heart / BP / cholesterol
+  [/heart|cardiac|cardio|blood.pres|b\.?p\b|amlodip|atenolol|metoprolol|met.*xl|metxl|lisinop|ramipril|warfarin|aspirin|ecosprin|clopidogrel|bisoprolol|digoxin|furosemide|telm|telmisartan|losartan|valsartan|olmesartan|cand|irbesartan/i, 'heart'],
+  // Bacteria / TB / AKT drugs (before lungs so brand names win)
+  [/bacteria|tubercul|rcin|rifampicin|rifampin|solonex|isoniazid|combutol|ethambutol|pyrazin/i, 'bacteria'],
+  // Lungs / respiratory
+  [/lung|asthma|breath|inhaler|respiratory|salbutamol|budesonide|montelukast|fluticasone|tiotropium|ipratropium|theophylline/i, 'lungs'],
   // Kidney / uric acid / gout
   [/kidney|renal|nephro|creatinine|dialysis|gout|uric|allopurinol|zyloric|febuxostat|fuberic/i, 'kidney'],
   [/bladder|urolog|cystitis/i, 'bladder'],
   // Liver / statins / cholesterol
   [/liver|hepat|gallblad|bile|ursodeoxycholic|statin|atorvastatin|atrova|rosuvastatin|rosuvas|simvastatin|pravastatin|cholesterol/i, 'liver'],
-  // Brain / neuro / seizure / TB pyridoxine adjunct
-  [/brain|neuro|psych|mental|anxiety|depres|sleep|melatonin|sertraline|fluoxetine|escitalopram|duloxetine|amitriptyline|quetiapine|olanzapine|risperidone|gabapentin|pregabalin|phenytoin|levetiracetam|lamotrigine|carbamazepine|donepezil|memantine|lacoset|lacosamide/i, 'brain'],
+  // Brain / neuro / seizure
+  [/brain|neuro|psych|mental|anxiety|depres|sleep|melatonin|sertraline|fluoxetine|escitalopram|duloxetine|amitriptyline|quetiapine|olanzapine|risperidone|gabapentin|pregabalin|phenytoin|levetiracetam|lamotrigine|carbamazepine|donepezil|memantine|lacoset|lacosam|lacosamide/i, 'brain'],
   [/stomach|gastro|acid|digest|antacid|omeprazole|lansoprazole|pantoprazole|pantocid|domperidone|metoclopramide|ondansetron|esomeprazole/i, 'stomach'],
   [/intestine|bowel|colon|ibs|crohn|loperamide|mesalazine/i, 'intestine'],
   // Spine / bone / calcium
@@ -47,8 +50,8 @@ const KEYWORD_MAP: Array<[RegExp, keyof typeof ICONS]> = [
   // Blood / vitamins / pyridoxine (Benadon = B6)
   [/blood|haemoglob|anemia|haematol|iron|folic|b12|vitamin.*b|benadon|pyridoxin|warfarin|heparin/i, 'blood'],
   [/thyroid|levothyroxine|thyroxine|propylthiouracil|carbimazole/i, 'thyroid'],
-  // Thymus / steroids / immune
-  [/thymus|immune|immunosuppres|tacrolimus|mycophenolate|prednisolon|wysolone|steroid|methylpred|dexameth|prednison/i, 'thymus'],
+  // Thymus / steroids / immune (MMF = mycophenolate mofetil)
+  [/thymus|immune|immunosuppres|tacrolimus|mycophenolate|\bmmf\b|prednisolon|wysolone|steroid|methylpred|dexameth|prednison/i, 'thymus'],
 ]
 
 export function getMedicineIcon(medicineName: string): OrganIcon {
