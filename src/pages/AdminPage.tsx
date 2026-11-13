@@ -27,15 +27,18 @@ function StatCard({ icon: Icon, label, value, color }: {
 interface AddUserFormData {
   display_name: string
   relation: string
-  email: string
   password: string
   confirm_password: string
   role: 'user' | 'admin'
 }
 
+function nameToEmail(name: string) {
+  return name.trim().toLowerCase().replace(/\s+/g, '.').replace(/[^a-z0-9.]/g, '') + '@medicine-tracker.app'
+}
+
 function AddUserModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
   const [form, setForm] = useState<AddUserFormData>({
-    display_name: '', relation: '', email: '', password: '', confirm_password: '', role: 'user'
+    display_name: '', relation: '', password: '', confirm_password: '', role: 'user'
   })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -43,12 +46,12 @@ function AddUserModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
   const addMutation = useMutation({
     mutationFn: async () => {
       if (!form.display_name.trim()) throw new Error('Name is required.')
-      if (!form.email.trim()) throw new Error('Email is required.')
       if (form.password.length < 6) throw new Error('Password must be at least 6 characters.')
       if (form.password !== form.confirm_password) throw new Error('Passwords do not match.')
 
+      const email = nameToEmail(form.display_name)
       const { error } = await supabase.rpc('create_family_member', {
-        p_email: form.email.trim().toLowerCase(),
+        p_email: email,
         p_password: form.password,
         p_display_name: form.display_name.trim(),
         p_role: form.role,
@@ -88,11 +91,6 @@ function AddUserModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
             <label className="text-xs font-medium text-warm-600 mb-1 block">Relation to patient</label>
             <input className="input-field w-full" placeholder="e.g. Son, Daughter, Husband…" value={form.relation}
               onChange={e => setForm(f => ({ ...f, relation: e.target.value }))} />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-warm-600 mb-1 block">Email *</label>
-            <input className="input-field w-full" type="email" placeholder="their@email.com" value={form.email}
-              onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
           </div>
           <div>
             <label className="text-xs font-medium text-warm-600 mb-1 block">Password *</label>
@@ -267,7 +265,6 @@ export function AdminPage() {
                     </p>
                     <p className="text-xs text-warm-400 truncate">
                       {u.relation ? `${u.relation} · ` : ''}{u.role}
-                      {u.email ? ` · ${u.email}` : ''}
                     </p>
                   </div>
                   {u.role === 'admin' && (
